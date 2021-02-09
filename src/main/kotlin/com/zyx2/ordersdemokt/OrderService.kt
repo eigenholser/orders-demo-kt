@@ -1,5 +1,6 @@
 package com.zyx2.ordersdemokt
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import javax.annotation.PostConstruct
@@ -11,6 +12,7 @@ class OrderService {
     private val priceDiscountTable = HashMap<String, Float>()
     private val discountThresholdTable = HashMap<String, Int>()
     private val SIMPLE_OFFER = true
+    private var mailObserver: MailObserver? = null
 
     @PostConstruct
     fun init(): Unit {
@@ -22,6 +24,8 @@ class OrderService {
 
         discountThresholdTable["apple"] = 2
         discountThresholdTable["orange"] = 3
+
+        mailObserver = MailObserver(EventStream())
     }
 
     fun checkout(order: ShopOrder): OrderCheckout {
@@ -34,7 +38,7 @@ class OrderService {
 
         val orderSubtotals = cart.map { computeSubtotal(it.key, it.value) }
         val orderTotal = orderSubtotals.fold(BigDecimal.ZERO, BigDecimal::add)
-
+        mailObserver?.addMessage("Order Successful: $cart, \$$orderTotal")
         return OrderCheckout(cart, orderTotal)
     }
 
