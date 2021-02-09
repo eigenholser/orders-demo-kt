@@ -54,4 +54,14 @@ class OrdersControllerTests() {
             assertEquals("0.85".toBigDecimal(), body.total)
         }
     }
+
+    @Test
+    fun `Order POST and Limited Stock returns HTTP_BAD_REQUEST`() {
+        val shopOrder = ShopOrder(arrayListOf("apple", "apple", "apple", "apple", "apple", "apple", "apple", "apple", "apple", "apple", "apple"))
+        val response: ResponseEntity<OrderCheckout> = this.restTemplate
+                .postForEntity("/orders", shopOrder)
+
+        val body = response.body
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
 }
