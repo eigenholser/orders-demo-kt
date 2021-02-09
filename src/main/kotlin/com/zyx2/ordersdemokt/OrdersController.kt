@@ -15,7 +15,10 @@ class OrdersController {
 
     @PostMapping("/orders")
     fun createOrder(@RequestBody order: ShopOrder): ResponseEntity<OrderCheckout> {
-        return ResponseEntity<OrderCheckout>(orderService.checkout(order), HttpStatus.OK);
+        try {
+            return ResponseEntity<OrderCheckout>(orderService.checkout(order), HttpStatus.OK);
+        } catch (e: Exception) {
+            return ResponseEntity<OrderCheckout>(HttpStatus.BAD_REQUEST)
+        }
     }
-
 }

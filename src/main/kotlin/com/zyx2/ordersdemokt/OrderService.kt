@@ -11,6 +11,7 @@ class OrderService {
     private val priceTable = HashMap<String, BigDecimal>()
     private val priceDiscountTable = HashMap<String, Float>()
     private val discountThresholdTable = HashMap<String, Int>()
+    private val inventoryTable = HashMap<String, Int>()
     private val SIMPLE_OFFER = true
     private var mailObserver: MailObserver? = null
 
@@ -25,6 +26,9 @@ class OrderService {
         discountThresholdTable["apple"] = 2
         discountThresholdTable["orange"] = 3
 
+        inventoryTable["apple"] = 10
+        inventoryTable["orange"] = 10
+
         mailObserver = MailObserver(EventStream())
     }
 
@@ -35,6 +39,13 @@ class OrderService {
                 }.toList()
         val cart = items.distinct().map { it to 0 }.toMap().toMutableMap()
         items.map { cart[it]?.plus(1)?.let { it1 -> cart.put(it, it1) } }
+
+        if (!checkInventory(cart)) {
+            mailObserver?.addMessage("Order Failed: Insufficient Inventory: $cart")
+            throw Exception("Insufficient Inventory: $cart")
+        }
+
+        adjustInventory(cart)
 
         val orderSubtotals = cart.map { computeSubtotal(it.key, it.value) }
         val orderTotal = orderSubtotals.fold(BigDecimal.ZERO, BigDecimal::add)
@@ -54,4 +65,33 @@ class OrderService {
         }
         return subtotal
     }
+
+    fun checkInventory(cart: MutableMap<String, Int>): Boolean {
+        val availableItems = cart.filterKeys { inventoryTable[it]!!.compareTo(cart[it]!!) > -1 }
+        return availableItems.size == cart.size
+    }
+
+    fun adjustInventory(cart: MutableMap<String, Int>): Unit {
+        for ((k, v) in cart) {
+            inventoryTable[k]?.minus(v)?.let { it -> inventoryTable.put(k, it) }
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
