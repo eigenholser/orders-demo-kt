@@ -32,7 +32,26 @@ class OrdersControllerTests() {
             assertFalse(body.items.contains("kumquat"))
         }
         if (body != null) { // Make IDE happy
-            assertEquals(body.total, "0.85".toBigDecimal())
+            assertEquals("0.85".toBigDecimal(), body.total)
+        }
+    }
+
+    @Test
+    fun `Order POST and Simple Offer quantities returns correct response with HTTP_OK`() {
+        val shopOrder = ShopOrder(arrayListOf("apple", "apple", "orange", "orange", "orange", "kumquat"))
+        val response: ResponseEntity<OrderCheckout> = this.restTemplate
+                .postForEntity("/orders", shopOrder)
+
+        val body = response.body
+        assertNotNull(body)
+        assertEquals(HttpStatus.OK, response.statusCode)
+        if (body != null) { // Make IDE happy
+            assertTrue(body.items.contains("apple"))
+            assertTrue(body.items.contains("orange"))
+            assertFalse(body.items.contains("kumquat"))
+        }
+        if (body != null) { // Make IDE happy
+            assertEquals("0.85".toBigDecimal(), body.total)
         }
     }
 }
