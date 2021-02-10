@@ -1,8 +1,5 @@
 package com.zyx2.ordersdemokt
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 class MailObserver(override var subject: Subject): Observer() {
 
     init {
@@ -15,9 +12,6 @@ class MailObserver(override var subject: Subject): Observer() {
     }
 
     override fun update() {
-        val currentTime = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-        val formatted = currentTime.format(formatter)
-        println("MAIL SERVICE [$formatted]: ${subject.getState()}")
+        println("MAIL SERVICE ${subject.getState()}")
     }
 }

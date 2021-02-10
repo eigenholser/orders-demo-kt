@@ -19,6 +19,14 @@ Make an API call:
         -d @order.json \
         http://localhost:8080/orders
 
+## Kafka Setup
+
+Setup Kafka according to [Kafka Quickstart](https://kafka.apache.org/quickstart):
+
+    bin/kafka-topics.sh --create --topic order-submitted --bootstrap-server localhost:9092
+
+Only `order-submitted` events are sent.
+
 ## Tests
 
 Run the tests:

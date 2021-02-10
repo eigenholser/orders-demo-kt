@@ -1,5 +1,8 @@
 package com.zyx2.ordersdemokt
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 abstract class Subject {
     private val observers: MutableList<Observer> = ArrayList<Observer>()
 
@@ -15,6 +18,13 @@ abstract class Subject {
     }
 
     fun notifyObservers(): Unit {
+        println(observers)
         observers.forEach { it.update() }
+    }
+
+    fun timestamp(): String {
+        val currentTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+        return currentTime.format(formatter)
     }
 }

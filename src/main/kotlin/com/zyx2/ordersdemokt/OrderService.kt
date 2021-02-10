@@ -1,6 +1,5 @@
 package com.zyx2.ordersdemokt
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import javax.annotation.PostConstruct
@@ -14,6 +13,7 @@ class OrderService {
     private val inventoryTable = HashMap<String, Int>()
     private val SIMPLE_OFFER = true
     private var mailObserver: MailObserver? = null
+    private var eventObserver: EventObserver? = null
 
     @PostConstruct
     fun init(): Unit {
@@ -29,7 +29,10 @@ class OrderService {
         inventoryTable["apple"] = 10
         inventoryTable["orange"] = 10
 
-        mailObserver = MailObserver(EventStream())
+        val eventStream = EventStream()
+        eventObserver = EventObserver(eventStream)
+        mailObserver = MailObserver(eventStream)
+
     }
 
     fun checkout(order: ShopOrder): OrderCheckout {

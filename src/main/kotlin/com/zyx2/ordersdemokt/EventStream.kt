@@ -6,7 +6,7 @@ class EventStream: Subject() {
     private val events: ArrayDeque<String> = ArrayDeque<String>()
 
     override fun setState(message: String): Unit {
-        events.add(message)
+        events.add("${timestamp()} $message")
         this.notifyObservers()
     }
 
